@@ -19,6 +19,7 @@ namespace water_quality
         connection.Open();
         var tableCmd = connection.CreateCommand();
 
+        // Create tables for inspections and facilities
         tableCmd.CommandText =
           @"CREATE TABLE IF NOT EXISTS inspections (
         inspection_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,12 +47,14 @@ namespace water_quality
       GetUserInput();
     }
 
+    // Show main menu
     static void GetUserInput()
       {
         Console.Clear();
         bool closeApp = false;
         while (closeApp == false)
         {
+          // Main menu options
           Console.WriteLine("\n\nWATER QUALITY DATA");
           Console.WriteLine("\nMAIN MENU");
           Console.WriteLine("\nPlease select an option.");
@@ -103,9 +106,9 @@ namespace water_quality
             case "9":
               GetRecordsByFacility();
               break;
-            // default:
-            //   Console.WriteLine("\nInvalid Command. Please type a number from 0 to 4.\n");
-            //   break;
+            default:
+              Console.WriteLine("\nInvalid Command. Please type a number from 0 to 9.\n");
+              break;
           }
         }
       }
@@ -146,6 +149,7 @@ namespace water_quality
   
           connection.Close();
 
+          // Show all rows from inspections table
           Console.WriteLine("INSPECTIONS");
           Console.WriteLine("------------------------------------------\n");
           foreach (var dw in tableData)
@@ -192,6 +196,7 @@ namespace water_quality
   
           connection.Close();
   
+          // Show all rows from facilities table
           Console.WriteLine("FACILITIES");
           Console.WriteLine("------------------------------------------\n");
           foreach (var dw in tableData)
@@ -204,7 +209,7 @@ namespace water_quality
     }
     private static void Insert(string option)
     {
-      // Insert inspection
+      // Insert inspection record
       if (option == "inspections")
       {
         GetAllRecords("facilities");
@@ -226,7 +231,7 @@ namespace water_quality
         }
       }
 
-      // Insert facility
+      // Insert facility record
       if (option == "facilities")
       {
         string facilityName = GetStringInput("\n\nPlease enter name of facility. Type 0 to return to main menu.\n\n");
@@ -252,6 +257,7 @@ namespace water_quality
 
     private static void Delete(string option)
     {
+      // Delete inspection record
       if (option == "inspections")
       {
         GetAllRecords("inspections");
@@ -277,6 +283,7 @@ namespace water_quality
         GetUserInput();
       }
 
+      // Delete facility record
       if (option == "facilities")
       {
         GetAllRecords("facilities");
@@ -285,6 +292,8 @@ namespace water_quality
   
         using (var connection = new SqliteConnection(connectionString))
         {
+          // Deletes inspection records associated with facility
+          // Then deletes facility
           connection.Open();
           var tableCmdDeleteChildren = connection.CreateCommand();
           var tableCmdDeleteParent = connection.CreateCommand();
@@ -387,7 +396,7 @@ namespace water_quality
 
     private static void GetRecordsByFacility()
     {
-      GetAllRecords("5");
+      GetAllRecords("facilities");
 
       var facilityIdInput = GetIntInput("\n\nPlease type the ID of the facility.\n\n");
 
@@ -424,6 +433,7 @@ namespace water_quality
 
         connection.Close();
 
+        // Show all inspections for a facility
         Console.WriteLine("ALL INSPECTIONS FOR FACILITY " + facilityId);
         Console.WriteLine("------------------------------------------\n");
         foreach (var dw in tableData)
@@ -434,6 +444,8 @@ namespace water_quality
       }
     }
 
+    // Get string input
+    // If 0, return to main menu
     internal static string GetStringInput(string message)
     {      
       Console.WriteLine(message);
@@ -444,6 +456,9 @@ namespace water_quality
 
       return stringInput;
     }
+
+    // Get date from string input
+    // If 0, return to main menu
     internal static string GetDateInput()
     {
       Console.WriteLine("\n\nPlease insert the date: (Format: dd-mm-yy). Type 0 to return to main menu.\n\n");
@@ -461,6 +476,9 @@ namespace water_quality
       return dateInput;
     }
 
+    // Get floating point number input
+    // Throw error if null
+    // "main menu" to return
     internal static float GetFloatInput(string message)
     {
       Console.WriteLine(message);
@@ -480,6 +498,9 @@ namespace water_quality
       return finalInput;
     }
 
+    // Get integer input
+    // Throw error if not integer, if negative, or if null
+    // "main menu" to return
     internal static int GetIntInput(string message)
     {
       Console.WriteLine(message);
@@ -499,6 +520,8 @@ namespace water_quality
       return finalInput;
     }
 
+    // Get ID from input
+    // Throw error if not integer, if null, or if less than 1
     internal static int GetIdInput(string message)
     {
       Console.WriteLine(message);
@@ -518,6 +541,8 @@ namespace water_quality
       return finalInput;
     }
   }
+
+  // Inspections table fields
   public class Inspections
   {
     public int inspection_id { get; set; }
@@ -526,6 +551,7 @@ namespace water_quality
     public float lead_level { get; set; }
   }
 
+  // Facilities table fields
   public class Facilities
   {
     public int facility_id { get; set; }
