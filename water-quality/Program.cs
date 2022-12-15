@@ -56,10 +56,11 @@ namespace water_quality
           Console.WriteLine("\nMAIN MENU");
           Console.WriteLine("\nPlease select an option.");
           Console.WriteLine("\nType 0 to Close Application.");
-          Console.WriteLine("Type 1 to View All Records.");
+          Console.WriteLine("Type 1 to View All Inspection Records.");
           Console.WriteLine("Type 2 to Insert Record.");
           Console.WriteLine("Type 3 to Delete Record.");
           Console.WriteLine("Type 4 to Update Record.");
+          Console.WriteLine("Type 5 to View All Facilities.");
           Console.WriteLine("------------------------------------------\n");
 
           string command = Console.ReadLine();
