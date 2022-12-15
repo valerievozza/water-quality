@@ -1,4 +1,4 @@
-// See https://aka.ms/new-console-template for more information
+﻿// See https://aka.ms/new-console-template for more information
 // Console.WriteLine("Hello, World!");
 
 using System;
@@ -73,73 +73,124 @@ namespace water_quality
               Environment.Exit(0);
               break;
             case "1":
-              GetAllRecords();
+              GetAllRecords("1");
               break;
-            case "2":
-              Insert();
+            // case "2":
+            //   Insert();
+            //   break;
+            // case "3":
+            //   Delete();
+            //   break;
+            // case "4":
+            //   Update();
+            //   break;
+            case "5":
+              GetAllRecords("5");
               break;
-            case "3":
-              Delete();
-              break;
-            case "4":
-              Update();
-              break;
-            default:
-              Console.WriteLine("\nInvalid Command. Please type a number from 0 to 4.\n");
-              break;
+            // default:
+            //   Console.WriteLine("\nInvalid Command. Please type a number from 0 to 4.\n");
+            //   break;
           }
         }
       }
 
-    private static void GetAllRecords()
+    private static void GetAllRecords(string input)
     {
       Console.Clear();
-      using (var connection = new SqliteConnection(connectionString))
+
+      // Get all inspections
+      if (input == "1")
       {
-        connection.Open();
-        var tableCmd = connection.CreateCommand();
-        tableCmd.CommandText =
-          $"SELECT * FROM inspections";
-
-        List<WaterQuality> tableData = new();
-
-        SqliteDataReader reader = tableCmd.ExecuteReader();
-
-        if (reader.HasRows)
+        using (var connection = new SqliteConnection(connectionString))
         {
-          while (reader.Read())
+          connection.Open();
+          var tableCmd = connection.CreateCommand();
+          tableCmd.CommandText =
+            $"SELECT * FROM inspections";
+  
+          List<Inspections> tableData = new();
+  
+          SqliteDataReader reader = tableCmd.ExecuteReader();
+  
+          if (reader.HasRows)
           {
-            tableData.Add(
-              new WaterQuality
-              {
-                Id = reader.GetInt32(0),
-                Location = reader.GetString(1),
-                Date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yy", new CultureInfo("en-US")),
-                Quantity = reader.GetFloat(3)
-              }); ;
+            while (reader.Read())
+            {
+              tableData.Add(
+                new Inspections
+                {
+                  inspection_id = reader.GetInt32(0),
+                  facility_id = reader.GetString(1),
+                  date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yy", new CultureInfo("en-US")),
+                  lead_level = reader.GetFloat(3)
+                }); ;
+            }
+          } else
+          {
+            Console.WriteLine("No rows found");
           }
-        } else
-        {
-          Console.WriteLine("No rows found");
+  
+          connection.Close();
+  
+          Console.WriteLine("------------------------------------------\n");
+          foreach (var dw in tableData)
+          {
+            Console.WriteLine($"{dw.inspection_id} - Facility: {dw.facility_id} | Date: {dw.date.ToString("dd-MMM-yyyy")} | Lead Level: {dw.lead_level}");
+          }
+          Console.WriteLine("------------------------------------------\n");
         }
+      }
 
-        connection.Close();
-
-        Console.WriteLine("------------------------------------------\n");
-        foreach (var dw in tableData)
+      // Get all facilities
+      if (input == "5")
+      {
+        using (var connection = new SqliteConnection(connectionString))
         {
-          Console.WriteLine($"{dw.Id} - Location: {dw.Location} | Date: {dw.Date.ToString("dd-MMM-yyyy")} | Quantity: {dw.Quantity}");
+          connection.Open();
+          var tableCmd = connection.CreateCommand();
+          tableCmd.CommandText =
+            $"SELECT * FROM facilities";
+  
+          List<Facilities> tableData = new();
+  
+          SqliteDataReader reader = tableCmd.ExecuteReader();
+  
+          if (reader.HasRows)
+          {
+            while (reader.Read())
+            {
+              tableData.Add(
+                new Facilities
+                {
+                  facility_id = reader.GetInt32(0),
+                  facility_name = reader.GetString(1),
+                  facility_type = reader.GetString(2),
+                  city = reader.GetString(3),
+                  state = reader.GetString(4),
+                  year_built = reader.GetInt32(5)
+                }); ;
+            }
+          } else
+          {
+            Console.WriteLine("No rows found");
+          }
+  
+          connection.Close();
+  
+          Console.WriteLine("------------------------------------------\n");
+          foreach (var dw in tableData)
+          {
+            Console.WriteLine($"{dw.facility_id} - Name: {dw.facility_name} | Type: {dw.facility_type} | City: {dw.city} | State: {dw.state} | Year Built: {dw.year_built}");
+          }
+          Console.WriteLine("------------------------------------------\n");
         }
-        Console.WriteLine("------------------------------------------\n");
       }
     }
     private static void Insert()
     {
-      string location = GetLocationInput();
+      string location = GetStringInput();
       string date = GetDateInput();
 
-      // TODO: add 'F' to quantity to pass floating point number to SQL command?
-      // TODO: change all code from int to float?
       float quantity = GetNumberInput("\n\nPlease enter quantity of lead detected in parts per billion (ppb)\n\n");
       
       using (var connection = new SqliteConnection(connectionString))
@@ -158,7 +209,7 @@ namespace water_quality
     private static void Delete()
     {
       Console.Clear();
-      GetAllRecords();
+      GetAllRecords("1");
 
       var recordId = GetNumberInput("\n\nPlease type the ID of the record you want to delete or type 0 to return to main menu.\n\n");
 
@@ -185,7 +236,7 @@ namespace water_quality
 
     internal static void Update()
     {
-      GetAllRecords();
+      GetAllRecords("1");
 
       var recordId = GetNumberInput("\n\nPlease type Id of the record you would like to update. Type 0 to return to main menu.\n\n");
 
@@ -204,7 +255,7 @@ namespace water_quality
           Update();
         }
 
-        string location = GetLocationInput();
+        string location = GetStringInput();
         string date = GetDateInput();
 
         float quantity = GetNumberInput("\n\nPlease enter quantity of lead detected in parts per billion (ppb)\n\n");
@@ -218,15 +269,15 @@ namespace water_quality
       }
     }
 
-    internal static string GetLocationInput()
+    internal static string GetStringInput()
     {
       Console.WriteLine("\n\nPlease enter location. Type 0 to return to main menu.\n\n");
 
-      string locationInput = Console.ReadLine();
+      string stringInput = Console.ReadLine();
 
-      if (locationInput == "0") GetUserInput();
+      if (stringInput == "0") GetUserInput();
 
-      return locationInput;
+      return stringInput;
     }
     internal static string GetDateInput()
     {
@@ -264,11 +315,21 @@ namespace water_quality
       return finalInput;
     }
   }
-  public class WaterQuality
+  public class Inspections
   {
-    public int Id { get; set; }
-    public string Location { get; set; }
-    public DateTime Date { get; set; }
-    public float Quantity { get; set; }
+    public int inspection_id { get; set; }
+    public string facility_id { get; set; }
+    public DateTime date { get; set; }
+    public float lead_level { get; set; }
+  }
+
+  public class Facilities
+  {
+    public int facility_id { get; set; }
+    public string facility_name { get; set; }
+    public string facility_type { get; set; }
+    public string city { get; set; }
+    public string state { get; set; }
+    public int year_built { get; set; }
   }
 }
