@@ -100,9 +100,9 @@ namespace water_quality
             // case "8":
             //   Update("8");
             //   break;
-            // case "9":
-            //   GetRecordsByFacility();
-            //   break;
+            case "9":
+              GetRecordsByFacility();
+              break;
             // default:
             //   Console.WriteLine("\nInvalid Command. Please type a number from 0 to 4.\n");
             //   break;
@@ -147,7 +147,8 @@ namespace water_quality
           }
   
           connection.Close();
-  
+
+          Console.WriteLine("INSPECTIONS");
           Console.WriteLine("------------------------------------------\n");
           foreach (var dw in tableData)
           {
@@ -193,6 +194,7 @@ namespace water_quality
   
           connection.Close();
   
+          Console.WriteLine("FACILITIES");
           Console.WriteLine("------------------------------------------\n");
           foreach (var dw in tableData)
           {
@@ -311,6 +313,56 @@ namespace water_quality
     //     connection.Close();
     //   }
     // }
+
+    private static void GetRecordsByFacility()
+    {
+      Console.Clear();
+      GetAllRecords("5");
+
+      var facilityIdInput = GetIntInput("\n\nPlease type the ID of the facility.\n\n");
+
+      int facilityId = Convert.ToInt32(facilityIdInput);
+
+      using (var connection = new SqliteConnection(connectionString))
+      {
+        connection.Open();
+        var tableCmd = connection.CreateCommand();
+        tableCmd.CommandText =
+          $"SELECT * FROM inspections WHERE facility_id={facilityId} ";
+
+        List<Inspections> tableData = new();
+
+        SqliteDataReader reader = tableCmd.ExecuteReader();
+
+        if (reader.HasRows)
+        {
+          while (reader.Read())
+          {
+            tableData.Add(
+              new Inspections
+              {
+                inspection_id = reader.GetInt32(0),
+                facility_id = reader.GetString(1),
+                date = DateTime.ParseExact(reader.GetString(2), "dd-MM-yy", new CultureInfo("en-US")),
+                lead_level = reader.GetFloat(3)
+              }); ;
+          }
+        } else
+        {
+          Console.WriteLine("No rows found");
+        }
+
+        connection.Close();
+
+        Console.WriteLine("ALL INSPECTIONS FOR FACILITY " + facilityId);
+        Console.WriteLine("------------------------------------------\n");
+        foreach (var dw in tableData)
+        {
+          Console.WriteLine($"{dw.inspection_id} - Facility: {dw.facility_id} | Date: {dw.date.ToString("dd-MMM-yyyy")} | Lead Level: {dw.lead_level}");
+        }
+        Console.WriteLine("------------------------------------------\n");
+      }
+    }
 
     internal static string GetStringInput(string message)
     {      
