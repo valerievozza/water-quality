@@ -56,7 +56,7 @@ namespace water_quality
           Console.WriteLine("\nMAIN MENU");
           Console.WriteLine("\nPlease select an option.");
           Console.WriteLine("\nType 0 to Close Application.");
-          Console.WriteLine("Type 1 to View All Inspection Records.");
+          Console.WriteLine("\nType 1 to View All Inspection Records.");
           Console.WriteLine("Type 2 to Insert Inspection Record.");
           Console.WriteLine("Type 3 to Delete Inspection Record.");
           Console.WriteLine("Type 4 to Update Inspection Record.");
@@ -77,26 +77,26 @@ namespace water_quality
               Environment.Exit(0);
               break;
             case "1":
-              GetAllRecords("1");
+              GetAllRecords("inspections");
               break;
             case "2":
-              Insert("2");
+              Insert("inspections");
               break;
-            // case "3":
-            //   Delete("3");
-            //   break;
+            case "3":
+              Delete("inspections");
+              break;
             // case "4":
             //   Update("4");
             //   break;
             case "5":
-              GetAllRecords("5");
+              GetAllRecords("facilities");
               break;
             case "6":
-              Insert("6");
+              Insert("facilities");
               break;
-            // case "7":
-            //   Delete("7");
-            //   break;
+            case "7":
+              Delete("facilities");
+              break;
             // case "8":
             //   Update("8");
             //   break;
@@ -112,10 +112,8 @@ namespace water_quality
 
     private static void GetAllRecords(string option)
     {
-      Console.Clear();
-
       // Get all inspections
-      if (option == "1")
+      if (option == "inspections")
       {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -159,7 +157,7 @@ namespace water_quality
       }
 
       // Get all facilities
-      if (option == "5")
+      if (option == "facilities")
       {
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -207,8 +205,9 @@ namespace water_quality
     private static void Insert(string option)
     {
       // Insert inspection
-      if (option == "2")
+      if (option == "inspections")
       {
+        GetAllRecords("facilities");
         int facilityId = GetIntInput("\n\nPlease enter facility ID. Type 'main menu' to return to main menu.\n\n");
         string date = GetDateInput();
   
@@ -228,7 +227,7 @@ namespace water_quality
       }
 
       // Insert facility
-      if (option == "6")
+      if (option == "facilities")
       {
         string facilityName = GetStringInput("\n\nPlease enter name of facility. Type 0 to return to main menu.\n\n");
         string facilityType = GetStringInput("\n\nPlease enter type of facility. Type 0 to return to main menu.\n\n");
@@ -251,33 +250,64 @@ namespace water_quality
       }
     }
 
-    // private static void Delete()
-    // {
-    //   Console.Clear();
-    //   GetAllRecords("1");
+    private static void Delete(string option)
+    {
+      if (option == "inspections")
+      {
+        GetAllRecords("inspections");
+  
+        var recordId = GetIdInput();
 
-    //   var recordId = GetFloatInput("\n\nPlease type the ID of the record you want to delete or type 0 to return to main menu.\n\n");
+        using (var connection = new SqliteConnection(connectionString))
+        {
+          connection.Open();
+          var tableCmd = connection.CreateCommand();
+  
+          tableCmd.CommandText = $"DELETE from inspections WHERE inspection_id = '{recordId}'";
+  
+          int rowCount = tableCmd.ExecuteNonQuery();
+  
+          if (rowCount == 0)
+          {
+            Console.WriteLine($"\n\nInspection record with ID {recordId} doesn't exist.");
+            Delete("inspections");
+          }
+        }
+        Console.WriteLine($"\n\nInspection record with ID {recordId} was deleted.");
+        GetUserInput();
+      }
 
-    //   using (var connection = new SqliteConnection(connectionString))
-    //   {
-    //     connection.Open();
-    //     var tableCmd = connection.CreateCommand();
+      if (option == "facilities")
+      {
+        GetAllRecords("facilities");
+  
+        var recordId = GetIdInput();
+  
+        using (var connection = new SqliteConnection(connectionString))
+        {
+          connection.Open();
+          var tableCmdDeleteChildren = connection.CreateCommand();
+          var tableCmdDeleteParent = connection.CreateCommand();
+  
+          tableCmdDeleteChildren.CommandText =
+          $"DELETE from inspections WHERE facility_id = '{recordId}'";
 
-    //     tableCmd.CommandText = $"DELETE from inspections WHERE Id = '{recordId}'";
+          tableCmdDeleteParent.CommandText = $"DELETE from facilities WHERE facility_id = '{recordId}'";
 
-    //     int rowCount = tableCmd.ExecuteNonQuery();
+          int rowCountChildren = tableCmdDeleteChildren.ExecuteNonQuery();
+          int rowCountParent = tableCmdDeleteParent.ExecuteNonQuery();
+  
+          if (rowCountParent == 0)
+          {
+            Console.WriteLine($"\n\nInspection record with ID {recordId} doesn't exist.");
+            Delete("inspections");
+          }
+        }
 
-    //     if (rowCount == 0)
-    //     {
-    //       Console.WriteLine($"\n\nRecord with ID {recordId} doesn't exist.\n\n");
-    //       Delete();
-    //     }
-    //   }
-
-    //   Console.WriteLine($"\n\nRecord with ID {recordId} was deleted.\n\n");
-
-    //   GetUserInput();
-    // }
+        Console.WriteLine($"\n\nInspection record with ID {recordId} was deleted.");
+        GetUserInput();
+      }
+    }
 
     // internal static void Update()
     // {
@@ -316,7 +346,6 @@ namespace water_quality
 
     private static void GetRecordsByFacility()
     {
-      Console.Clear();
       GetAllRecords("5");
 
       var facilityIdInput = GetIntInput("\n\nPlease type the ID of the facility.\n\n");
@@ -429,22 +458,24 @@ namespace water_quality
       return finalInput;
     }
 
-  //   internal static int GetFacilityId()
-  //   {
-  //     string numberInput = Console.ReadLine();
+    internal static int GetIdInput()
+    {
+      Console.WriteLine("\n\nPlease type the ID of the inspection record you want to delete or type 0 to return to main menu.\n\n");
 
-  //     if (numberInput == "0") GetUserInput();
+      string idInput = Console.ReadLine();
 
-  //     while (!Int32.TryParse(numberInput, out _) || Convert.ToInt32(numberInput) < 0 || numberInput == null)
-  //     {
-  //       Console.WriteLine("\n\nInvalid number. Try again.\n\n");
-  //       numberInput = Console.ReadLine();
-  //     }
+      if (idInput == "0") GetUserInput();
 
-  //     int finalInput = Convert.ToInt32(numberInput);
+      while (!Int32.TryParse(idInput, out _) || Convert.ToInt32(idInput) <= 0 || idInput == null)
+      {
+        Console.WriteLine("\n\nInvalid ID. Try again.\n\n");
+        idInput = Console.ReadLine();
+      }
 
-  //     return finalInput;
-  //   }
+      int finalInput = Convert.ToInt32(idInput);
+
+      return finalInput;
+    }
   }
   public class Inspections
   {
