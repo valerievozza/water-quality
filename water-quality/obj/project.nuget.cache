@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "kx3YvlIAwlnDxn3CEuWH7NIkESuhYqLqdUr6WMDbgKtx7PZqMn0xwFJIeoj2iWYKttL5W6zhjJv8CU/SsdO59Q==",
+  "success": true,
+  "projectFilePath": "/home/val/100Devs/Projects/water-quality/water-quality/water-quality.csproj",
+  "expectedPackageFiles": [
+    "/home/val/.nuget/packages/microsoft.data.sqlite/6.0.11/microsoft.data.sqlite.6.0.11.nupkg.sha512",
+    "/home/val/.nuget/packages/microsoft.data.sqlite.core/6.0.11/microsoft.data.sqlite.core.6.0.11.nupkg.sha512",
+    "/home/val/.nuget/packages/sqlitepclraw.bundle_e_sqlite3/2.0.6/sqlitepclraw.bundle_e_sqlite3.2.0.6.nupkg.sha512",
+    "/home/val/.nuget/packages/sqlitepclraw.core/2.0.6/sqlitepclraw.core.2.0.6.nupkg.sha512",
+    "/home/val/.nuget/packages/sqlitepclraw.lib.e_sqlite3/2.0.6/sqlitepclraw.lib.e_sqlite3.2.0.6.nupkg.sha512",
+    "/home/val/.nuget/packages/sqlitepclraw.provider.e_sqlite3/2.0.6/sqlitepclraw.provider.e_sqlite3.2.0.6.nupkg.sha512",
+    "/home/val/.nuget/packages/system.memory/4.5.3/system.memory.4.5.3.nupkg.sha512"
+  ],
+  "logs": []
+}
