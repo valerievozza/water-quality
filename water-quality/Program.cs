@@ -85,9 +85,9 @@ namespace water_quality
             case "3":
               Delete("inspections");
               break;
-            // case "4":
-            //   Update("4");
-            //   break;
+            case "4":
+              Update("inspections");
+              break;
             case "5":
               GetAllRecords("facilities");
               break;
@@ -97,9 +97,9 @@ namespace water_quality
             case "7":
               Delete("facilities");
               break;
-            // case "8":
-            //   Update("8");
-            //   break;
+            case "8":
+              Update("facilities");
+              break;
             case "9":
               GetRecordsByFacility();
               break;
@@ -256,7 +256,7 @@ namespace water_quality
       {
         GetAllRecords("inspections");
   
-        var recordId = GetIdInput();
+        var recordId = GetIdInput("\n\nPlease type the ID of the inspection record you want to delete or type 0 to return to main menu.\n\n");
 
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -281,7 +281,7 @@ namespace water_quality
       {
         GetAllRecords("facilities");
   
-        var recordId = GetIdInput();
+        var recordId = GetIdInput("\n\nPlease type the ID of the facility record you want to delete or type 0 to return to main menu.\n\n");
   
         using (var connection = new SqliteConnection(connectionString))
         {
@@ -309,40 +309,81 @@ namespace water_quality
       }
     }
 
-    // internal static void Update()
-    // {
-    //   GetAllRecords("1");
+    // TODO: Allow user to update one field of record without re-entering all fields
+    internal static void Update(string option)
+    {
+      if (option == "inspections")
+      {
+        GetAllRecords("inspections");
+  
+        var recordId = GetIdInput("\n\nPlease type the ID of the inspection record you want to update or type 0 to return to main menu.\n\n");
+  
+        using (var connection = new SqliteConnection(connectionString))
+        {
+          connection.Open();
+  
+          var checkCmd = connection.CreateCommand();
+          checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM inspections WHERE inspection_id = {recordId})";
+          int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+  
+          if (checkQuery == 0)
+          {
+            Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\n\n");
+            connection.Close();
+            Update("inspections");
+          }
+  
+          // TODO!: Add validation that checks if facility ID is valid
 
-    //   var recordId = GetFloatInput("\n\nPlease type Id of the record you would like to update. Type 0 to return to main menu.\n\n");
-
-    //   using (var connection = new SqliteConnection(connectionString))
-    //   {
-    //     connection.Open();
-
-    //     var checkCmd = connection.CreateCommand();
-    //     checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM inspections WHERE Id = {recordId})";
-    //     int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
-
-    //     if (checkQuery == 0)
-    //     {
-    //       Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\n\n");
-    //       connection.Close();
-    //       Update();
-    //     }
-
-    //     string location = GetStringInput();
-    //     string date = GetDateInput();
-
-    //     float quantity = GetFloatInput("\n\nPlease enter quantity of lead detected in parts per billion (ppb)\n\n");
-
-    //     var tableCmd = connection.CreateCommand();
-    //     tableCmd.CommandText = $"UPDATE inspections SET location = '{location}', date = '{date}', quantity = {quantity} WHERE Id = {recordId}";
-
-    //     tableCmd.ExecuteNonQuery();
-
-    //     connection.Close();
-    //   }
-    // }
+          int facilityId = GetIdInput("\n\nPlease enter facility ID. Type 'main menu' to return to main menu.\n\n");
+          string date = GetDateInput();
+          float leadLevel = GetFloatInput("\n\nPlease enter quantity of lead detected in parts per billion (ppb). Type 'main menu' to return to main menu.\n\n");
+  
+          var tableCmd = connection.CreateCommand();
+          tableCmd.CommandText = $"UPDATE inspections SET facility_id = '{facilityId}', date = '{date}', lead_level = {leadLevel} WHERE inspection_id = {recordId}";
+  
+          tableCmd.ExecuteNonQuery();
+  
+          connection.Close();
+        }
+      }
+      // Update facility record
+      if (option == "facilities")
+      {
+        GetAllRecords("facilities");
+  
+        var recordId = GetIdInput("\n\nPlease type the ID of the facility record you want to update or type 0 to return to main menu.\n\n");
+  
+        using (var connection = new SqliteConnection(connectionString))
+        {
+          connection.Open();
+  
+          var checkCmd = connection.CreateCommand();
+          checkCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM facilities WHERE facility_id = {recordId})";
+          int checkQuery = Convert.ToInt32(checkCmd.ExecuteScalar());
+  
+          if (checkQuery == 0)
+          {
+            Console.WriteLine($"\n\nRecord with Id {recordId} doesn't exist.\n\n");
+            connection.Close();
+            Update("facilities");
+          }
+  
+          string facilityName = GetStringInput("\n\nPlease enter name of facility. Type 0 to return to main menu.\n\n");
+          string facilityType = GetStringInput("\n\nPlease enter type of facility. Type 0 to return to main menu.\n\n");
+          string city = GetStringInput("\n\nPlease enter city where facility is located. Type 0 to return to main menu.\n\n");
+          string state = GetStringInput("\n\nPlease enter state where facility is located. Type 0 to return to main menu.\n\n");
+          int yearBuilt = GetIntInput("\n\nPlease enter year facility was built. Type 0 to return to main menu.\n\n");
+  
+          var tableCmd = connection.CreateCommand();
+          tableCmd.CommandText = $"UPDATE facilities SET facility_name = '{facilityName}', facility_type = '{facilityType}', city = '{city}', state = '{state}', year_built = {yearBuilt} WHERE facility_id = {recordId}";
+  
+          tableCmd.ExecuteNonQuery();
+  
+          connection.Close();
+        }
+      }
+    }
 
     private static void GetRecordsByFacility()
     {
@@ -458,9 +499,9 @@ namespace water_quality
       return finalInput;
     }
 
-    internal static int GetIdInput()
+    internal static int GetIdInput(string message)
     {
-      Console.WriteLine("\n\nPlease type the ID of the inspection record you want to delete or type 0 to return to main menu.\n\n");
+      Console.WriteLine(message);
 
       string idInput = Console.ReadLine();
 
