@@ -1,4 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
+// See https://aka.ms/new-console-template for more information
 // Console.WriteLine("Hello, World!");
 
 using System;
@@ -21,11 +21,23 @@ namespace water_quality
 
         tableCmd.CommandText =
           @"CREATE TABLE IF NOT EXISTS inspections (
-        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-        Location TEXT,
-        Date TEXT,
-        Quantity REAL
-        )";
+        inspection_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        facility_id INTEGER NOT NULL,
+        date TEXT NOT NULL,
+        lead_level REAL NOT NULL,
+        FOREIGN KEY (facility_id)
+          REFERENCES facilities (facility_id)
+        );
+        
+        CREATE TABLE IF NOT EXISTS facilities (
+        facility_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        facility_name TEXT NOT NULL,
+        facility_type TEXT NOT NULL,
+        city TEXT NOT NULL,
+        state TEXT NOT NULL,
+        year_built INTEGER NOT NULL
+        )
+        ";
 
         tableCmd.ExecuteNonQuery();
 
