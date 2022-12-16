@@ -68,7 +68,7 @@ namespace water_quality
           Console.WriteLine("Type 7 to Delete Facility Information.");
           Console.WriteLine("Type 8 to Update Facility Information.");
           Console.WriteLine("Type 9 to View Inspections by Facility.");
-          Console.WriteLine("------------------------------------------\n");
+          Console.WriteLine("\n------------------------------------------\n");
 
           string command = Console.ReadLine();
 
@@ -115,6 +115,7 @@ namespace water_quality
 
     private static void GetAllRecords(string option)
     {
+      Console.Clear();
       // Get all inspections
       if (option == "inspections")
       {
@@ -150,7 +151,7 @@ namespace water_quality
           connection.Close();
 
           // Show all rows from inspections table
-          Console.WriteLine("INSPECTIONS");
+          Console.WriteLine("\nINSPECTIONS");
           Console.WriteLine("------------------------------------------\n");
           foreach (var dw in tableData)
           {
@@ -197,7 +198,7 @@ namespace water_quality
           connection.Close();
   
           // Show all rows from facilities table
-          Console.WriteLine("FACILITIES");
+          Console.WriteLine("\nFACILITIES");
           Console.WriteLine("------------------------------------------\n");
           foreach (var dw in tableData)
           {
@@ -209,6 +210,7 @@ namespace water_quality
     }
     private static void Insert(string option)
     {
+      Console.Clear();
       // Insert inspection record
       if (option == "inspections")
       {
@@ -428,13 +430,13 @@ namespace water_quality
           }
         } else
         {
-          Console.WriteLine("No rows found");
+          Console.WriteLine("\n\nNo rows found\n\n");
         }
 
         connection.Close();
 
         // Show all inspections for a facility
-        Console.WriteLine("ALL INSPECTIONS FOR FACILITY " + facilityId);
+        Console.WriteLine("\nALL INSPECTIONS FOR FACILITY " + facilityId);
         Console.WriteLine("------------------------------------------\n");
         foreach (var dw in tableData)
         {
