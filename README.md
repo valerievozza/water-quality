@@ -1,13 +1,42 @@
 
 # Water Quality Data
 
-A console app for tracking water quality data for mutiple facilities.
-
-![image](https://user-images.githubusercontent.com/101529105/207768580-f2e8f478-4fa5-4f53-955c-7c7704580516.png)
+A console app for tracking water quality data. Enables user to add facilities to database and log levels of lead in water over time.
 
 ## Tech Stack
 
-C#, SQLite
+.NET, C#, SQLite
+
+## Screenshots
+
+### Main Menu
+![Screenshot from 2022-12-15 16-00-33](https://user-images.githubusercontent.com/101529105/207992380-2d6ef557-7874-4459-940a-c9a4e1dfbd88.png)
+
+### View All Inspections
+![Screenshot from 2022-12-15 16-00-48](https://user-images.githubusercontent.com/101529105/207992378-05b0ae07-f9b8-48d2-9f20-3b31eaf2d72d.png)
+
+### Add Inspection
+![Screenshot from 2022-12-15 16-01-28](https://user-images.githubusercontent.com/101529105/207992376-aa5facea-4fbd-41f4-859b-edd2a414adff.png)
+
+### Update Inspection Record
+![Screenshot from 2022-12-15 16-03-23](https://user-images.githubusercontent.com/101529105/207992375-10d298dc-3d80-4386-b57c-01e69c81621e.png)
+
+### Add Facility
+![Screenshot from 2022-12-15 16-04-15](https://user-images.githubusercontent.com/101529105/207992374-11063486-04f8-4496-890f-a72bdfe6176c.png)
+
+### View Inspections By Facility
+![Screenshot from 2022-12-15 16-04-49](https://user-images.githubusercontent.com/101529105/207992372-2e53e2f5-4cdb-4841-b5f6-5b34f497040d.png)
+
+## Optimizations
+
+- Added facilities table
+- Added filter inspections by facility
+
+**Planned Optimizations:**
+
+- Allow user to update a record without re-entering all fields
+- Allow user to search by facility name
+- Add contaminants table to log water quality data for multiple contaminants
 
 ## Other Examples of My Work
 
